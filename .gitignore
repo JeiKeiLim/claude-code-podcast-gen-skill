@@ -1,0 +1,5 @@
+.claude/
+.env
+*.mp3
+*.wav
+podcast_config.yaml
