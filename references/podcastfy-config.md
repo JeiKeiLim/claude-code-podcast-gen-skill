@@ -23,8 +23,8 @@ text_to_speech:
   default_tts_model: "elevenlabs"
   elevenlabs:
     default_voices:
-      question: "YOUR_KOREAN_MALE_VOICE_ID"
-      answer: "YOUR_KOREAN_FEMALE_VOICE_ID"
+      question: "CxErO97xpQgQXYmapDKX"
+      answer: "8jHHF8rMqMlg8if2mOUe"
     model: "eleven_multilingual_v2"
 ```
 
@@ -35,8 +35,8 @@ text_to_speech:
   default_tts_model: "elevenlabs"
   elevenlabs:
     default_voices:
-      question: "pNInz6obpgDQGcFmaJgB"   # Adam
-      answer: "21m00Tcm4TlvDq8ikWAM"     # Rachel
+      question: "gs0tAILXbY5DNrJrsM6F"
+      answer: "tnSpp4vdxKPjI9w0GnoV"
     model: "eleven_multilingual_v2"
 ```
 
