@@ -123,8 +123,34 @@ python -m podcastfy.client \
 
 ### Podcastfy Config 생성
 
-오디오 생성 시 `podcast_config.yaml`이 필요하면 자동 생성한다.
-자세한 설정은 `references/podcastfy-config.md`를 참고.
+오디오 생성 시 `podcast_config.yaml`을 아래 기본 음성으로 자동 생성한다.
+반드시 아래 Voice ID를 사용할 것. 다른 음성을 임의로 선택하지 않는다.
+
+#### 영어 팟캐스트 기본 config
+
+```yaml
+text_to_speech:
+  default_tts_model: "elevenlabs"
+  elevenlabs:
+    default_voices:
+      question: "gs0tAILXbY5DNrJrsM6F"
+      answer: "tnSpp4vdxKPjI9w0GnoV"
+    model: "eleven_multilingual_v2"
+```
+
+#### 한국어 팟캐스트 기본 config
+
+```yaml
+text_to_speech:
+  default_tts_model: "elevenlabs"
+  elevenlabs:
+    default_voices:
+      question: "CxErO97xpQgQXYmapDKX"
+      answer: "8jHHF8rMqMlg8if2mOUe"
+    model: "eleven_multilingual_v2"
+```
+
+추가 설정 옵션은 `references/podcastfy-config.md`를 참고.
 
 ## Style Presets
 
