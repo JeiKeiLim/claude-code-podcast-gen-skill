@@ -113,15 +113,26 @@ description: "Generate AI podcast scripts and audio from source content. Use thi
 ### Prerequisites
 
 ```bash
-pip install elevenlabs pydub
-brew install ffmpeg  # macOS
+pip install pydub
+pip install fish-audio-sdk    # Fish Audio (기본, 저렴)
+pip install elevenlabs        # ElevenLabs (고품질, 고가)
+brew install ffmpeg           # macOS
 ```
 
-ELEVENLABS_API_KEY 환경변수 또는 .env 파일이 필요하다.
+FISH_API_KEY 또는 ELEVENLABS_API_KEY 환경변수 또는 .env 파일이 필요하다.
 
 ### Default Voice IDs
 
 반드시 아래 Voice ID를 사용할 것. 다른 음성을 임의로 선택하지 않는다.
+
+#### Fish Audio (기본 백엔드)
+
+| 언어 | Person1 (Host) | Person2 (Expert) |
+|------|---------------|-----------------|
+| English | `860323c9e1354f6ea14079788b0bca0d` | `933563129e564b19a115bedd57b7406a` |
+| Korean | `4cfdf04caeee49178c49c024d7a672e3` | `d5daef3484474a63a429f5952857f70c` |
+
+#### ElevenLabs (대안)
 
 | 언어 | Person1 (Host) | Person2 (Expert) |
 |------|---------------|-----------------|
@@ -134,17 +145,26 @@ ELEVENLABS_API_KEY 환경변수 또는 .env 파일이 필요하다.
 # .env에서 API 키 로드 후 실행
 export $(grep -v '^#' .env | xargs)
 
-# 영어 팟캐스트
+# Fish Audio 영어 팟캐스트
 python ${CLAUDE_SKILL_DIR}/podcast_tts.py ./podcast_script.txt \
   -o ./podcast_output.mp3 \
+  --backend fish \
+  --voice-a 860323c9e1354f6ea14079788b0bca0d \
+  --voice-b 933563129e564b19a115bedd57b7406a
+
+# Fish Audio 한국어 팟캐스트
+python ${CLAUDE_SKILL_DIR}/podcast_tts.py ./podcast_script.txt \
+  -o ./podcast_output.mp3 \
+  --backend fish \
+  --voice-a 4cfdf04caeee49178c49c024d7a672e3 \
+  --voice-b d5daef3484474a63a429f5952857f70c
+
+# ElevenLabs 영어 팟캐스트
+python ${CLAUDE_SKILL_DIR}/podcast_tts.py ./podcast_script.txt \
+  -o ./podcast_output.mp3 \
+  --backend elevenlabs \
   --voice-a gs0tAILXbY5DNrJrsM6F \
   --voice-b tnSpp4vdxKPjI9w0GnoV
-
-# 한국어 팟캐스트
-python ${CLAUDE_SKILL_DIR}/podcast_tts.py ./podcast_script.txt \
-  -o ./podcast_output.mp3 \
-  --voice-a CxErO97xpQgQXYmapDKX \
-  --voice-b 8jHHF8rMqMlg8if2mOUe
 ```
 
 추가 옵션은 `references/audio-generation.md`를 참고.
