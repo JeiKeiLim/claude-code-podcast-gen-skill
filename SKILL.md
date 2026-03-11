@@ -1,16 +1,16 @@
 ---
 name: podcast-gen
-description: "Generate AI podcast scripts and audio from source content. Use this skill whenever the user wants to create a podcast, generate a podcast script, convert documents/articles/analysis into audio conversations, or mentions 'podcast', '팟캐스트', 'audio conversation', 'NotebookLM style', or 'GenFM'. Also trigger when the user wants two speakers to discuss a topic, asks for a conversational summary of content, or wants to listen to their notes/analysis during a commute. This skill handles both script generation (in Person1/Person2 tag format compatible with Podcastfy) and optional audio generation via Podcastfy CLI."
+description: "Generate AI podcast scripts and audio from source content. Use this skill whenever the user wants to create a podcast, generate a podcast script, convert documents/articles/analysis into audio conversations, or mentions 'podcast', '팟캐스트', 'audio conversation', 'NotebookLM style', or 'GenFM'. Also trigger when the user wants two speakers to discuss a topic, asks for a conversational summary of content, or wants to listen to their notes/analysis during a commute. This skill handles both script generation (in Person1/Person2 tag format) and optional audio generation via podcast_tts.py."
 ---
 
 # Podcast Generator Skill
 
-소스 콘텐츠를 2인 대화형 팟캐스트 스크립트로 변환하고, 선택적으로 Podcastfy를 통해 오디오를 생성하는 스킬.
+소스 콘텐츠를 2인 대화형 팟캐스트 스크립트로 변환하고, 선택적으로 ElevenLabs TTS를 통해 오디오를 생성하는 스킬.
 
 ## Workflow Overview
 
 ```
-소스 콘텐츠 → 스크립트 생성 (<Person1>/<Person2>) → (선택) Podcastfy TTS → MP3
+소스 콘텐츠 → 스크립트 생성 (<Person1>/<Person2>) → (선택) podcast_tts.py → MP3
 ```
 
 ## Step 1: Determine Parameters
@@ -22,7 +22,7 @@ description: "Generate AI podcast scripts and audio from source content. Use thi
 | language | 소스 언어 자동 감지 | `ko` 또는 `en` |
 | duration | 30분 | 목표 길이 (분) |
 | style | casual | `casual`, `deep-dive`, `debate`, `storytelling` |
-| audio | false | Podcastfy로 오디오까지 생성할지 여부 |
+| audio | false | 오디오까지 생성할지 여부 |
 
 ### Duration → Word Count 매핑
 
@@ -34,9 +34,9 @@ description: "Generate AI podcast scripts and audio from source content. Use thi
 
 ## Step 2: Generate Script
 
-### Script Format (Podcastfy 호환)
+### Script Format
 
-반드시 아래 포맷으로 생성한다. 이것이 Podcastfy가 인식하는 유일한 포맷이다:
+반드시 아래 포맷으로 생성한다:
 
 ```
 <Person1>대사 내용</Person1>
@@ -50,7 +50,7 @@ description: "Generate AI podcast scripts and audio from source content. Use thi
 - 태그 사이에 빈 줄 없이 연속으로 작성
 - 한 대사는 1-4문장이 적절 (너무 길면 독백이 됨)
 
-### Script Generation Prompt
+### Script Generation Guidelines
 
 소스 콘텐츠를 분석한 뒤, 아래 원칙에 따라 스크립트를 생성한다.
 **장편(30분+)의 경우 references/longform-strategy.md를 먼저 읽는다.**
@@ -108,49 +108,46 @@ description: "Generate AI podcast scripts and audio from source content. Use thi
 ## Step 4: Audio Generation (Optional)
 
 사용자가 오디오 생성도 요청한 경우에만 실행.
-Podcastfy가 설치되어 있어야 한다.
+`${CLAUDE_SKILL_DIR}/podcast_tts.py` 스크립트를 사용한다.
+
+### Prerequisites
 
 ```bash
-# 1. Podcastfy 설치 확인
-pip show podcastfy
-
-# 2. 오디오 생성
-python -m podcastfy.client \
-  --transcript ./podcast_script.txt \
-  --tts-model elevenlabs \
-  --conversation-config podcast_config.yaml
+pip install elevenlabs pydub
+brew install ffmpeg  # macOS
 ```
 
-### Podcastfy Config 생성
+ELEVENLABS_API_KEY 환경변수 또는 .env 파일이 필요하다.
 
-오디오 생성 시 `podcast_config.yaml`을 아래 기본 음성으로 자동 생성한다.
+### Default Voice IDs
+
 반드시 아래 Voice ID를 사용할 것. 다른 음성을 임의로 선택하지 않는다.
 
-#### 영어 팟캐스트 기본 config
+| 언어 | Person1 (Host) | Person2 (Expert) |
+|------|---------------|-----------------|
+| English | `gs0tAILXbY5DNrJrsM6F` | `tnSpp4vdxKPjI9w0GnoV` |
+| Korean | `CxErO97xpQgQXYmapDKX` | `8jHHF8rMqMlg8if2mOUe` |
 
-```yaml
-text_to_speech:
-  default_tts_model: "elevenlabs"
-  elevenlabs:
-    default_voices:
-      question: "gs0tAILXbY5DNrJrsM6F"
-      answer: "tnSpp4vdxKPjI9w0GnoV"
-    model: "eleven_multilingual_v2"
+### 실행 명령
+
+```bash
+# .env에서 API 키 로드 후 실행
+export $(grep -v '^#' .env | xargs)
+
+# 영어 팟캐스트
+python ${CLAUDE_SKILL_DIR}/podcast_tts.py ./podcast_script.txt \
+  -o ./podcast_output.mp3 \
+  --voice-a gs0tAILXbY5DNrJrsM6F \
+  --voice-b tnSpp4vdxKPjI9w0GnoV
+
+# 한국어 팟캐스트
+python ${CLAUDE_SKILL_DIR}/podcast_tts.py ./podcast_script.txt \
+  -o ./podcast_output.mp3 \
+  --voice-a CxErO97xpQgQXYmapDKX \
+  --voice-b 8jHHF8rMqMlg8if2mOUe
 ```
 
-#### 한국어 팟캐스트 기본 config
-
-```yaml
-text_to_speech:
-  default_tts_model: "elevenlabs"
-  elevenlabs:
-    default_voices:
-      question: "CxErO97xpQgQXYmapDKX"
-      answer: "8jHHF8rMqMlg8if2mOUe"
-    model: "eleven_multilingual_v2"
-```
-
-추가 설정 옵션은 `references/podcastfy-config.md`를 참고.
+추가 옵션은 `references/audio-generation.md`를 참고.
 
 ## Style Presets
 
@@ -177,7 +174,7 @@ text_to_speech:
 ## Important Notes
 
 - 장편(30분+) 생성 시 반드시 `references/longform-strategy.md`를 읽을 것
-- 스크립트 포맷은 반드시 `<Person1>`/`<Person2>` 태그 사용 (Podcastfy 호환)
+- 스크립트 포맷은 반드시 `<Person1>`/`<Person2>` 태그 사용
 - 한 대사가 4문장을 넘지 않도록 (자연스러운 대화 리듬 유지)
 - 60분 스크립트는 context window 한계로 여러 번에 나눠 생성할 수 있음
   → 이 경우 이전 파트 요약을 context에 포함하여 연속성 유지

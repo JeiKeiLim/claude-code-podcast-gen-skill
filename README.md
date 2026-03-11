@@ -1,6 +1,6 @@
 # podcast-gen
 
-A Claude Code skill that transforms source content into two-person conversational podcast scripts, with optional audio generation via [Podcastfy](https://github.com/souzatharsis/podcastfy).
+A Claude Code skill that transforms source content into two-person conversational podcast scripts, with optional audio generation via ElevenLabs TTS.
 
 Inspired by Google NotebookLM's audio overview feature.
 
@@ -11,7 +11,7 @@ Inspired by Google NotebookLM's audio overview feature.
 - Multiple style presets: `casual`, `deep-dive`, `debate`, `storytelling`
 - Configurable duration (10min / 30min / 60min)
 - Long-form strategy with structured section breaks for 30min+ episodes
-- Optional TTS audio generation via Podcastfy + ElevenLabs
+- Built-in TTS engine (`podcast_tts.py`) with ElevenLabs — no heavy dependencies
 
 ## Installation
 
@@ -22,6 +22,19 @@ git clone https://github.com/JeiKeiLim/claude-code-podcast-gen-skill.git ~/.clau
 ```
 
 The skill will be available in your next Claude Code session.
+
+### Audio generation dependencies (optional)
+
+```bash
+pip install elevenlabs pydub
+brew install ffmpeg  # macOS
+```
+
+Set your ElevenLabs API key:
+
+```bash
+export ELEVENLABS_API_KEY=your_key_here
+```
 
 ## Usage
 
@@ -51,25 +64,27 @@ Once installed, Claude Code will automatically detect when you want to create a 
 | language | auto-detect | `ko`, `en` |
 | duration | 30min | `10`, `30`, `60` (minutes) |
 | style | casual | `casual`, `deep-dive`, `debate`, `storytelling` |
-| audio | false | Set to true to generate MP3 via Podcastfy |
+| audio | false | Set to true to generate MP3 via ElevenLabs |
 
-## Audio Generation (Optional)
+## Audio Generation
 
-To generate audio from scripts, you need:
+The included `podcast_tts.py` script converts transcript files to MP3 using ElevenLabs TTS. It features:
 
-1. [Podcastfy](https://github.com/souzatharsis/podcastfy) installed (`pip install podcastfy`)
-2. [ffmpeg](https://ffmpeg.org/) installed (`brew install ffmpeg` on macOS)
-3. An [ElevenLabs](https://elevenlabs.io/) API key in your `.env` file
+- **Prosody continuity** via `previous_text`/`next_text` parameters
+- **Smart pauses** — 500ms for speaker switches, 200ms for same-speaker continuation
+- **Volume normalization** to -16 dBFS (podcast standard)
+- **Progress tracking** with ETA
 
-See [references/podcastfy-config.md](references/podcastfy-config.md) for detailed configuration.
+See [references/audio-generation.md](references/audio-generation.md) for detailed options.
 
 ## File Structure
 
 ```
 podcast-gen/
 ├── SKILL.md                          # Main skill definition
+├── podcast_tts.py                    # TTS engine (ElevenLabs)
 ├── references/
-│   ├── podcastfy-config.md           # Podcastfy & ElevenLabs configuration guide
+│   ├── audio-generation.md           # Audio generation detailed guide
 │   └── longform-strategy.md          # Strategy for 30min+ episodes
 ├── README.md
 └── LICENSE
