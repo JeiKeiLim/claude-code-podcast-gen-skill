@@ -10,11 +10,11 @@ Listen to podcast-gen introduce itself — these were generated entirely by the 
 
 ### English ([script](https://github.com/JeiKeiLim/claude-code-podcast-gen-skill/releases/download/v1.0.0/intro_podcast_script.txt))
 
-https://github.com/JeiKeiLim/claude-code-podcast-gen-skill/releases/download/v1.0.0/intro_podcast.mp4
+https://github.com/user-attachments/assets/2b40eb91-3bce-45d1-b0f7-e964c073a668
 
 ### 한국어 ([script](https://github.com/JeiKeiLim/claude-code-podcast-gen-skill/releases/download/v1.0.0/intro_podcast_script_ko.txt))
 
-https://github.com/JeiKeiLim/claude-code-podcast-gen-skill/releases/download/v1.0.0/intro_podcast_ko.mp4
+https://github.com/user-attachments/assets/34981f27-2516-4fa9-a42c-9fc713f9ed46
 
 ## Features
 
