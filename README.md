@@ -4,6 +4,18 @@ A Claude Code skill that transforms source content into two-person conversationa
 
 Inspired by Google NotebookLM's audio overview feature.
 
+## Demo
+
+Listen to podcast-gen introduce itself — these were generated entirely by the skill:
+
+### English ([script](https://github.com/JeiKeiLim/claude-code-podcast-gen-skill/releases/download/v1.0.0/intro_podcast_script.txt))
+
+https://github.com/JeiKeiLim/claude-code-podcast-gen-skill/releases/download/v1.0.0/intro_podcast.mp4
+
+### 한국어 ([script](https://github.com/JeiKeiLim/claude-code-podcast-gen-skill/releases/download/v1.0.0/intro_podcast_script_ko.txt))
+
+https://github.com/JeiKeiLim/claude-code-podcast-gen-skill/releases/download/v1.0.0/intro_podcast_ko.mp4
+
 ## Features
 
 - Generates natural two-person dialogue scripts in `<Person1>`/`<Person2>` tag format
