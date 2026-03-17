@@ -48,7 +48,7 @@ python podcast_tts.py <transcript.txt> -o <output.mp3> \
 
 | 언어 | Person1 (Host) | Person2 (Expert) |
 |------|---------------|-----------------|
-| English | `860323c9e1354f6ea14079788b0bca0d` | `933563129e564b19a115bedd57b7406a` |
+| English | `e3f4539c9a2544e7ada516a4323006f8` | `933563129e564b19a115bedd57b7406a` |
 | Korean | `4cfdf04caeee49178c49c024d7a672e3` | `d5daef3484474a63a429f5952857f70c` |
 
 ### ElevenLabs (대안)
