@@ -175,3 +175,7 @@ python ${CLAUDE_SKILL_DIR}/podcast_tts.py ./podcast_script.txt \
 ```
 
 Select voice IDs from the tables above based on the output language. See `references/audio-generation.md` for additional options (speed, pause duration, model selection).
+
+### Crash Recovery
+
+The TTS script caches each audio segment to disk as it's generated. If the process fails mid-generation (API timeout, connection drop, etc.), **just re-run the exact same command** — it will skip already-generated segments and resume from where it left off. Do not regenerate the script or change any arguments.
