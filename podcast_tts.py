@@ -2,8 +2,7 @@
 """
 podcast_tts.py — Podcast TTS Engine
 
-<Person1>/<Person2> 포맷의 트랜스크립트를 TTS로 변환하여
-MP3 팟캐스트 오디오를 생성한다.
+Converts <Person1>/<Person2> transcript format into MP3 podcast audio via TTS.
 
 Supported backends:
 - elevenlabs: ElevenLabs TTS (high quality, expensive)
@@ -27,12 +26,15 @@ Usage:
 """
 
 import argparse
-import io
+import hashlib
+import json
 import os
 import re
+import shutil
 import sys
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Optional
 
 from pydub import AudioSegment
@@ -58,8 +60,8 @@ class TTSConfig:
     model: str = ""                     # backend-specific model
     language_code: Optional[str] = None # "ko", "en", etc.
     speed: float = 1.0
-    speaker_pause_ms: int = 500         # 화자 전환 시 silence
-    same_speaker_pause_ms: int = 200    # 같은 화자 연속 시 silence
+    speaker_pause_ms: int = 500         # silence between different speakers
+    same_speaker_pause_ms: int = 200    # silence between same speaker
     # ElevenLabs-specific
     stability: float = 0.5
     similarity_boost: float = 0.75
@@ -84,7 +86,7 @@ def parse_transcript(text: str) -> list[Utterance]:
 
     if not matches:
         raise ValueError(
-            "트랜스크립트에서 <Person1>/<Person2> 태그를 찾을 수 없습니다."
+            "No <Person1>/<Person2> tags found in transcript."
         )
 
     utterances = []
@@ -93,12 +95,61 @@ def parse_transcript(text: str) -> list[Utterance]:
         if clean:
             utterances.append(Utterance(speaker=speaker, text=clean, index=i))
 
-    print(f"  파싱 완료: {len(utterances)}개 대사")
+    print(f"  Parsed: {len(utterances)} utterances")
     return utterances
 
 
 # ──────────────────────────────────────────────
-# 2. TTS Backends
+# 2. Disk Cache
+# ──────────────────────────────────────────────
+
+def _transcript_hash(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:8]
+
+
+def _cache_dir(output_path: str, transcript_hash: str) -> Path:
+    parent = Path(output_path).resolve().parent
+    return parent / f"podcast_tts_cache_{transcript_hash}"
+
+
+def _cache_meta_path(cache: Path) -> Path:
+    return cache / "meta.json"
+
+
+def _segment_path(cache: Path, index: int, speaker: str) -> Path:
+    return cache / f"{index:04d}_{speaker}.mp3"
+
+
+def init_cache(output_path: str, transcript_text: str) -> Path:
+    full_hash = _transcript_hash(transcript_text)
+    cache = _cache_dir(output_path, full_hash)
+    meta_path = _cache_meta_path(cache)
+
+    if cache.exists():
+        if meta_path.exists():
+            meta = json.loads(meta_path.read_text())
+            if meta.get("transcript_hash") == full_hash:
+                cached = len(list(cache.glob("*_Person*.mp3")))
+                print(f"  Cache found: {cache.name} ({cached} segments cached)")
+                return cache
+        # Hash mismatch — stale cache
+        print(f"  Script changed, resetting cache: {cache.name}")
+        shutil.rmtree(cache)
+
+    cache.mkdir(parents=True)
+    meta_path.write_text(json.dumps({"transcript_hash": full_hash}))
+    print(f"  Cache directory created: {cache.name}")
+    return cache
+
+
+def cleanup_cache(cache: Path) -> None:
+    if cache.exists():
+        shutil.rmtree(cache)
+        print(f"  Cache cleaned up: {cache.name}")
+
+
+# ──────────────────────────────────────────────
+# 3. TTS Backends
 # ──────────────────────────────────────────────
 
 def _generate_elevenlabs(
@@ -175,7 +226,8 @@ def _generate_fish(
 def generate_all_audio(
     utterances: list[Utterance],
     config: TTSConfig,
-) -> list[tuple[Utterance, bytes]]:
+    cache: Path,
+) -> list[tuple[Utterance, Path]]:
     # Initialize backend client
     if config.backend == "elevenlabs":
         from elevenlabs import client as elevenlabs_client
@@ -188,9 +240,18 @@ def generate_all_audio(
 
     results = []
     total = len(utterances)
+    skipped = 0
     start_time = time.time()
 
     for i, utt in enumerate(utterances):
+        seg_path = _segment_path(cache, i, utt.speaker)
+
+        # Resume: skip already-cached segments
+        if seg_path.exists() and seg_path.stat().st_size > 0:
+            results.append((utt, seg_path))
+            skipped += 1
+            continue
+
         if config.backend == "elevenlabs":
             prev_utt = utterances[i - 1] if i > 0 else None
             next_utt = utterances[i + 1] if i < total - 1 else None
@@ -200,11 +261,14 @@ def generate_all_audio(
         else:
             audio_bytes = _generate_fish(utt, config, client)
 
-        results.append((utt, audio_bytes))
+        # Write to disk immediately
+        seg_path.write_bytes(audio_bytes)
+        results.append((utt, seg_path))
 
         elapsed = time.time() - start_time
+        generated = (i + 1) - skipped
         pct = (i + 1) / total * 100
-        eta = elapsed / (i + 1) * (total - i - 1)
+        eta = elapsed / generated * (total - i - 1) if generated > 0 else 0
         speaker_label = "A" if utt.speaker == "Person1" else "B"
         print(
             f"  [{i+1}/{total}] ({pct:.0f}%) "
@@ -215,15 +279,17 @@ def generate_all_audio(
         )
 
     print()
+    if skipped > 0:
+        print(f"  Loaded {skipped} segments from cache, generated {total - skipped} new")
     return results
 
 
 # ──────────────────────────────────────────────
-# 3. Audio Assembly
+# 4. Audio Assembly
 # ──────────────────────────────────────────────
 
 def assemble_audio(
-    segments: list[tuple[Utterance, bytes]],
+    segments: list[tuple[Utterance, Path]],
     config: TTSConfig,
 ) -> AudioSegment:
     combined = AudioSegment.empty()
@@ -231,8 +297,8 @@ def assemble_audio(
     same_pause = AudioSegment.silent(duration=config.same_speaker_pause_ms)
 
     prev_speaker = None
-    for utt, audio_bytes in segments:
-        segment = AudioSegment.from_file(io.BytesIO(audio_bytes), format="mp3")
+    for utt, seg_path in segments:
+        segment = AudioSegment.from_file(str(seg_path), format="mp3")
 
         if prev_speaker is not None:
             if utt.speaker != prev_speaker:
@@ -252,7 +318,7 @@ def normalize_audio(audio: AudioSegment, target_dbfs: float = -16.0) -> AudioSeg
 
 
 # ──────────────────────────────────────────────
-# 4. Main Pipeline
+# 5. Main Pipeline
 # ──────────────────────────────────────────────
 
 def generate_podcast(
@@ -263,43 +329,49 @@ def generate_podcast(
     print(f"\nPodcast TTS Engine ({config.backend})")
     print(f"{'─' * 40}")
 
-    # 1. 트랜스크립트 파싱
-    print(f"\n트랜스크립트 로드: {transcript_path}")
+    # 1. Parse transcript
+    print(f"\nLoading transcript: {transcript_path}")
     with open(transcript_path, "r", encoding="utf-8") as f:
         text = f.read()
     utterances = parse_transcript(text)
 
-    # 2. 비용 추정
+    # 2. Initialize cache
+    cache = init_cache(output_path, text)
+
+    # 3. Cost estimate
     total_chars = sum(len(u.text) for u in utterances)
     total_bytes_utf8 = sum(len(u.text.encode("utf-8")) for u in utterances)
-    print(f"  총 글자 수: {total_chars:,}")
+    print(f"  Total characters: {total_chars:,}")
     if config.backend == "fish":
-        print(f"  총 UTF-8 바이트: {total_bytes_utf8:,}")
-    print(f"  모델: {config.model}")
+        print(f"  Total UTF-8 bytes: {total_bytes_utf8:,}")
+    print(f"  Model: {config.model}")
 
-    # 3. TTS 생성
-    print(f"\nTTS 생성 중...")
-    segments = generate_all_audio(utterances, config)
+    # 4. Generate TTS (segments cached to disk)
+    print(f"\nGenerating TTS...")
+    segments = generate_all_audio(utterances, config, cache)
 
-    # 4. 오디오 병합
-    print(f"\n오디오 병합 중...")
+    # 5. Merge audio
+    print(f"\nMerging audio...")
     combined = assemble_audio(segments, config)
 
-    # 5. 노멀라이즈
-    print(f"  볼륨 노멀라이제이션 (-16 dBFS)...")
+    # 6. Normalize
+    print(f"  Volume normalization (-16 dBFS)...")
     combined = normalize_audio(combined)
 
-    # 6. 저장
+    # 7. Save
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
     combined.export(output_path, format="mp3", bitrate="192k")
 
     duration_min = len(combined) / 1000 / 60
     file_size_mb = os.path.getsize(output_path) / 1024 / 1024
-    print(f"\n완료!")
-    print(f"  파일: {output_path}")
-    print(f"  길이: {duration_min:.1f}분")
-    print(f"  크기: {file_size_mb:.1f}MB")
+    print(f"\nDone!")
+    print(f"  File: {output_path}")
+    print(f"  Duration: {duration_min:.1f} min")
+    print(f"  Size: {file_size_mb:.1f} MB")
     print(f"{'─' * 40}\n")
+
+    # 8. Clean up cache on success
+    cleanup_cache(cache)
 
     return output_path
 
@@ -310,28 +382,28 @@ def generate_podcast(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Podcast TTS — <Person1>/<Person2> 트랜스크립트를 MP3로 변환"
+        description="Podcast TTS — Convert <Person1>/<Person2> transcript to MP3"
     )
-    parser.add_argument("transcript", help="트랜스크립트 파일 경로 (.txt)")
-    parser.add_argument("-o", "--output", default="podcast.mp3", help="출력 파일 경로")
+    parser.add_argument("transcript", help="Transcript file path (.txt)")
+    parser.add_argument("-o", "--output", default="podcast.mp3", help="Output file path")
     parser.add_argument(
         "--backend",
         choices=["elevenlabs", "fish"],
         default="fish",
-        help="TTS 백엔드 (기본: fish)",
+        help="TTS backend (default: fish)",
     )
     parser.add_argument("--voice-a", required=True, help="Person1 Voice ID")
     parser.add_argument("--voice-b", required=True, help="Person2 Voice ID")
-    parser.add_argument("--model", default=None, help="TTS 모델 (백엔드별 기본값 사용)")
-    parser.add_argument("--lang", default=None, help="언어 코드 (ko, en 등)")
+    parser.add_argument("--model", default=None, help="TTS model (uses backend default if omitted)")
+    parser.add_argument("--lang", default=None, help="Language code (ko, en, etc.)")
     parser.add_argument(
-        "--speaker-pause", type=int, default=500, help="화자 전환 silence (ms)"
+        "--speaker-pause", type=int, default=500, help="Silence between speakers (ms)"
     )
-    parser.add_argument("--speed", type=float, default=1.0, help="음성 속도 (0.7-1.2)")
+    parser.add_argument("--speed", type=float, default=1.0, help="Speech speed (0.7-1.2)")
     parser.add_argument(
         "--api-key",
         default=None,
-        help="API 키 (미지정 시 ELEVENLABS_API_KEY 또는 FISH_API_KEY 환경변수 사용)",
+        help="API key (falls back to ELEVENLABS_API_KEY or FISH_API_KEY env var)",
     )
 
     args = parser.parse_args()
@@ -343,8 +415,8 @@ def main():
     }[args.backend]
     api_key = args.api_key or os.environ.get(env_key)
     if not api_key:
-        print(f"API 키가 필요합니다.")
-        print(f"  --api-key 옵션 또는 {env_key} 환경변수를 설정하세요.")
+        print(f"API key required.")
+        print(f"  Set --api-key or {env_key} environment variable.")
         sys.exit(1)
 
     config = TTSConfig(
