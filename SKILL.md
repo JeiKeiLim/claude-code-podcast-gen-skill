@@ -41,6 +41,8 @@ These word counts are calibrated to real TTS output timing. Hitting the target w
 | 30 min | ~4,500 | ~4,800 | 120–150 |
 | 60 min | ~9,000 | ~9,600 | 250–300 |
 
+For durations not listed (e.g., 20 or 40 minutes), interpolate using ~150 Korean words/min or ~160 English words/min.
+
 ## Step 2: Generate Script
 
 ### Output Format
@@ -159,23 +161,23 @@ Use these specific voice IDs — they've been selected for natural podcast-style
 # Load API keys from .env
 export $(grep -v '^#' .env | xargs)
 
-# Fish Audio (default)
+# Fish Audio (default) — substitute voice IDs from the tables above based on output language
 python ${CLAUDE_SKILL_DIR}/podcast_tts.py ./podcast_script.txt \
   -o ./podcast_output.mp3 \
   --backend fish \
-  --voice-a <PERSON1_VOICE_ID> \
-  --voice-b <PERSON2_VOICE_ID>
+  --voice-a e3f4539c9a2544e7ada516a4323006f8 \
+  --voice-b 933563129e564b19a115bedd57b7406a
 
-# ElevenLabs
+# ElevenLabs — substitute voice IDs from the tables above based on output language
 python ${CLAUDE_SKILL_DIR}/podcast_tts.py ./podcast_script.txt \
   -o ./podcast_output.mp3 \
   --backend elevenlabs \
-  --voice-a <PERSON1_VOICE_ID> \
-  --voice-b <PERSON2_VOICE_ID>
+  --voice-a gs0tAILXbY5DNrJrsM6F \
+  --voice-b tnSpp4vdxKPjI9w0GnoV
 ```
 
-Select voice IDs from the tables above based on the output language. See `references/audio-generation.md` for additional options (speed, pause duration, model selection).
+The examples above use English voice IDs. For Korean, swap them with the Korean IDs from the tables above. See `references/audio-generation.md` for additional options (speed, pause duration, model selection).
 
 ### Crash Recovery
 
-The TTS script caches each audio segment to disk as it's generated. If the process fails mid-generation (API timeout, connection drop, etc.), **just re-run the exact same command** — it will skip already-generated segments and resume from where it left off. Do not regenerate the script or change any arguments.
+The TTS script caches each audio segment to disk as it's generated. If the process fails mid-generation (API timeout, connection drop, etc.), **just re-run the exact same command** — it will skip already-generated segments and resume from where it left off. Do not regenerate the script or change any arguments. Make sure to re-export the `.env` file before re-running if using environment variables for API keys.

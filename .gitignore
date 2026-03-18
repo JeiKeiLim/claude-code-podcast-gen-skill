@@ -8,3 +8,4 @@ intro_podcast_script*.txt
 test_transcript*.txt
 podcast_*.txt
 podcast-gen-workspace/
+__pycache__
