@@ -1,174 +1,159 @@
-# Long-form Podcast Strategy (30분+ / 30min+)
+# Long-form Podcast Strategy (30min+)
 
-30분 이상의 장편 팟캐스트는 단순히 대사를 길게 늘리는 것이 아니라,
-구조적 접근이 필요하다. 이 문서는 장편 스크립트 생성의 전략을 다룬다.
+Long-form podcasts need structural thinking, not just more words. Listeners' attention fades in 5–7 minute cycles, so the script needs "reset points" — moments that re-engage the listener.
 
-## 핵심 원칙: 청취자의 집중력 관리
+## Reset Point Techniques
 
-출퇴근길 청취자는 운전/지하철에서 듣는다. 집중력은 5-7분 주기로 떨어진다.
-따라서 5-7분마다 "리셋 포인트"가 필요하다.
+1. **Topic shift**: "That said, let's look at this from a completely different angle..."
+2. **Surprise reveal**: "But here's where it gets unexpected..."
+3. **Listener address**: "Now if you're listening to this, you're probably thinking..."
+4. **Personal anecdote**: "I actually had a similar experience where..."
+5. **Recap + tease**: "So to summarize what we've covered... but honestly the real story is what comes next"
 
-### 리셋 포인트 기법
+## Section Structure
 
-1. **화제 전환**: "그건 그렇고, 이번엔 좀 다른 각도에서 볼까요?"
-2. **놀라운 사실**: "근데 여기서 반전이 있어요. 실제로는..."
-3. **청취자 참여**: "지금 듣고 계신 분들은 아마 이렇게 생각하실 텐데..."
-4. **일화 삽입**: "제가 전에 비슷한 경험이 있었는데요..."
-5. **요약 후 전진**: "지금까지 정리하면... 그런데 사실 진짜 핵심은 다음인데요"
-
-## 구조 설계
-
-### 30분 팟캐스트 (약 9,000 단어 KO / 9,600 단어 EN)
+### 30-minute podcast (~9,000 words KO / ~9,600 words EN)
 
 ```
-[인트로]        2분    ~600 단어
-[섹션 1]        6분    ~1,800 단어    ← 핵심 주제 소개
-[전환]          0.5분  ~150 단어
-[섹션 2]        6분    ~1,800 단어    ← 심층 분석
-[전환]          0.5분  ~150 단어
-[섹션 3]        6분    ~1,800 단어    ← 반론/다른 시각
-[전환]          0.5분  ~150 단어
-[섹션 4]        5분    ~1,500 단어    ← 실용적 시사점
-[마무리]        3분    ~900 단어
-합계           30분   ~8,850 단어
+[Intro]         2 min    ~600 words
+[Section 1]     6 min    ~1,800 words    ← Core topic introduction
+[Transition]    0.5 min  ~150 words
+[Section 2]     6 min    ~1,800 words    ← Deep analysis
+[Transition]    0.5 min  ~150 words
+[Section 3]     6 min    ~1,800 words    ← Counterpoint / different angle
+[Transition]    0.5 min  ~150 words
+[Section 4]     5 min    ~1,500 words    ← Practical implications
+[Wrap-up]       3 min    ~900 words
+Total          30 min   ~8,850 words
 ```
 
-### 60분 팟캐스트 (약 18,000 단어 KO / 19,200 단어 EN)
+### 60-minute podcast (~18,000 words KO / ~19,200 words EN)
 
 ```
-[인트로]        3분    ~900 단어
-[섹션 1]        7분    ~2,100 단어
-[전환]          0.5분
-[섹션 2]        7분    ~2,100 단어
-[중간 요약]     2분    ~600 단어     ← "여기까지 정리하면..."
-[섹션 3]        7분    ~2,100 단어
-[전환]          0.5분
-[섹션 4]        7분    ~2,100 단어
-[전환]          0.5분
-[섹션 5]        7분    ~2,100 단어
-[중간 요약]     2분    ~600 단어     ← "후반부로 넘어가기 전에..."
-[섹션 6]        7분    ~2,100 단어
-[전환]          0.5분
-[섹션 7]        5분    ~1,500 단어    ← 시사점/전망
-[마무리]        4분    ~1,200 단어
-합계           60분   ~17,500 단어
+[Intro]         3 min    ~900 words
+[Section 1]     7 min    ~2,100 words
+[Transition]    0.5 min
+[Section 2]     7 min    ~2,100 words
+[Mid-summary]   2 min    ~600 words      ← "So let's recap..."
+[Section 3]     7 min    ~2,100 words
+[Transition]    0.5 min
+[Section 4]     7 min    ~2,100 words
+[Transition]    0.5 min
+[Section 5]     7 min    ~2,100 words
+[Mid-summary]   2 min    ~600 words      ← "Before we move to the second half..."
+[Section 6]     7 min    ~2,100 words
+[Transition]    0.5 min
+[Section 7]     5 min    ~1,500 words    ← Implications / outlook
+[Wrap-up]       4 min    ~1,200 words
+Total          60 min   ~17,500 words
 ```
 
-## Context Window 관리
+## Context Window Management
 
-60분 스크립트(~18,000 단어)는 단일 생성에서 품질이 떨어질 수 있다.
-다음 전략으로 나눠 생성한다:
+60-minute scripts (~18,000 words) can lose quality if generated in one shot. Split into parts:
 
-### 분할 생성 전략
+### Split Generation Strategy
 
-1. **아웃라인 먼저 생성**
-   - 전체 구조와 각 섹션의 핵심 포인트를 먼저 잡는다
-   - 이 아웃라인은 이후 모든 파트 생성 시 context에 포함
+1. **Generate outline first** — full structure with key points per section. Keep this in context for all parts.
 
-2. **파트별 생성**
-   - 파트 1: 인트로 + 섹션 1-3 + 중간 요약 (~20분 분량)
-   - 파트 2: 섹션 4-5 + 중간 요약 (~20분 분량)
-   - 파트 3: 섹션 6-7 + 마무리 (~20분 분량)
+2. **Generate by part:**
+   - Part 1: Intro + Sections 1–3 + mid-summary (~20 min)
+   - Part 2: Sections 4–5 + mid-summary (~20 min)
+   - Part 3: Sections 6–7 + wrap-up (~20 min)
 
-3. **연속성 유지**
-   - 각 파트 생성 시 이전 파트의 마지막 2-3 대사를 context에 포함
-   - "이전 파트 요약: ..."을 프롬프트에 추가
+3. **Maintain continuity** — include the last 2–3 lines from the previous part as context, plus a brief summary of what was covered.
 
-4. **병합**
-   - 모든 파트를 하나의 .txt 파일로 연결
-   - 파트 경계의 전환이 자연스러운지 확인
+4. **Merge** — concatenate all parts into one .txt file. Check that transitions at part boundaries sound natural.
 
-### 분할 생성 시 프롬프트 템플릿
+### Split Generation Prompt Template
 
 ```
-[파트 N 생성 프롬프트]
-
-전체 아웃라인:
+Full outline:
 {outline}
 
-이전 파트 요약:
+Previous part summary:
 {previous_summary}
 
-이전 파트 마지막 대사:
+Last lines from previous part:
 <Person1>{last_p1_line}</Person1>
 <Person2>{last_p2_line}</Person2>
 
-이번 파트에서 다룰 섹션:
+Sections to cover in this part:
 {current_sections}
 
-위 내용을 이어서 <Person1>/<Person2> 형식으로 작성하세요.
-이전 대사와 자연스럽게 이어져야 합니다.
+Continue from where the previous part left off. The dialogue should flow naturally
+from the last lines above. Use <Person1>/<Person2> format.
 ```
 
-## 대화 패턴 다양화
+## Conversation Pattern Variety
 
-장편에서 같은 패턴이 반복되면 단조로워진다. 다음 패턴을 교차 사용:
+Long episodes become monotonous if they repeat the same pattern. Alternate between these:
 
-### 패턴 1: 표준 Q&A
+### Pattern 1: Standard Q&A
 ```
-<Person1>질문</Person1>
-<Person2>답변 + 설명</Person2>
-<Person1>반응 + 후속질문</Person1>
-<Person2>추가 설명</Person2>
-```
-
-### 패턴 2: 반론/토론
-```
-<Person1>주장 또는 일반적 인식 제시</Person1>
-<Person2>반론 또는 다른 시각</Person2>
-<Person1>그 점은 인정하지만... 재반론</Person1>
-<Person2>절충안 또는 결론</Person2>
+<Person1>Question</Person1>
+<Person2>Answer + explanation</Person2>
+<Person1>Reaction + follow-up</Person1>
+<Person2>Further detail</Person2>
 ```
 
-### 패턴 3: 스토리텔링
+### Pattern 2: Debate / Pushback
 ```
-<Person1>사례/일화 시작</Person1>
-<Person1>사례 전개</Person1>
-<Person2>그 사례의 의미 분석</Person2>
-<Person1>놀라운 반응</Person1>
-```
-
-### 패턴 4: 빠른 래핑
-```
-<Person1>짧은 질문</Person1>
-<Person2>짧은 답변</Person2>
-<Person1>또 다른 짧은 질문</Person1>
-<Person2>짧은 답변 + 확장</Person2>
+<Person1>States claim or common belief</Person1>
+<Person2>Challenges or offers alternative view</Person2>
+<Person1>Concedes partially, but counters</Person1>
+<Person2>Finds middle ground or conclusion</Person2>
 ```
 
-### 패턴 5: 요약/전환
+### Pattern 3: Storytelling
 ```
-<Person2>지금까지 내용 정리</Person2>
-<Person1>동의 + 다음 주제로 전환</Person1>
+<Person1>Begins an anecdote or case study</Person1>
+<Person1>Continues the story</Person1>
+<Person2>Analyzes what the story means</Person2>
+<Person1>Surprised reaction</Person1>
 ```
 
-## 추임새/필러 가이드
+### Pattern 4: Rapid-fire
+```
+<Person1>Short question</Person1>
+<Person2>Short answer</Person2>
+<Person1>Another quick question</Person1>
+<Person2>Short answer + expansion</Person2>
+```
 
-### 한국어 추임새 (빈도: 10-15 대사당 1회)
+### Pattern 5: Recap / Transition
+```
+<Person2>Summarizes what's been covered</Person2>
+<Person1>Agrees + pivots to next topic</Person1>
+```
 
-동의/반응: "맞아요", "그렇죠", "오~", "아~", "진짜요?"
-감탄: "와", "대박", "흥미롭네요", "신기하다"
-전환: "근데요", "그런데 말이죠", "아 그리고"
-생각: "음...", "글쎄요", "그건 좀..."
-강조: "진짜", "솔직히", "사실은"
+## Filler and Reaction Guide
 
-### 영어 추임새
+Fillers make dialogue sound human. Use them naturally — roughly once every 10–15 lines.
 
-동의/반응: "Right", "Exactly", "Oh interesting", "Hmm", "Yeah"
-감탄: "Wow", "That's wild", "No way", "Fascinating"
-전환: "But here's the thing", "Now", "Speaking of which"
-생각: "Well...", "I mean...", "You know..."
-강조: "Actually", "Literally", "Honestly"
+### Korean
+- Agreement: "맞아요", "그렇죠", "오~", "아~", "진짜요?"
+- Surprise: "와", "대박", "흥미롭네요", "신기하다"
+- Transition: "근데요", "그런데 말이죠", "아 그리고"
+- Thinking: "음...", "글쎄요", "그건 좀..."
+- Emphasis: "진짜", "솔직히", "사실은"
 
-## 품질 체크리스트
+### English
+- Agreement: "Right", "Exactly", "Oh interesting", "Hmm", "Yeah"
+- Surprise: "Wow", "That's wild", "No way", "Fascinating"
+- Transition: "But here's the thing", "Now", "Speaking of which"
+- Thinking: "Well...", "I mean...", "You know..."
+- Emphasis: "Actually", "Literally", "Honestly"
 
-스크립트 생성 후 다음을 확인:
+## Quality Checklist
 
-- [ ] 모든 대사가 `<Person1>` 또는 `<Person2>` 태그로 감싸져 있는가
-- [ ] 한 대사가 4문장을 넘지 않는가 (예외: 스토리텔링 패턴)
-- [ ] 5-7분마다 리셋 포인트가 있는가
-- [ ] 대화 패턴이 다양하게 교차되는가
-- [ ] 추임새가 자연스럽게 분포되어 있는가
-- [ ] 인트로에서 주제가 명확히 소개되는가
-- [ ] 마무리에서 핵심이 요약되는가
-- [ ] 전체 단어 수가 목표 시간에 맞는가
+After generating, verify:
+
+- [ ] All lines wrapped in `<Person1>` or `<Person2>` tags
+- [ ] No utterance exceeds 4 sentences (exception: storytelling pattern)
+- [ ] Reset points every 5–7 minutes
+- [ ] Conversation patterns vary across sections
+- [ ] Fillers distributed naturally
+- [ ] Intro clearly introduces the topic
+- [ ] Wrap-up summarizes key points
+- [ ] Total word count matches target duration

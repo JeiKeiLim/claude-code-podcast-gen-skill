@@ -1,0 +1,203 @@
+{
+  "skill_name": "podcast-gen",
+  "evals": [
+    {
+      "id": 1,
+      "name": "english-request-english-source",
+      "prompt": "Turn this paper into a casual 10-minute podcast",
+      "expected_output": "English podcast script in <Person1>/<Person2> format, casual style, approximately 3,200 words / 80-100 lines",
+      "files": ["/Users/limjk/GitHub/JeiKeiLim/uLift-paper/uLift-manuscript/uLift-paper.md"],
+      "assertions": [
+        {
+          "name": "uses-person-tags",
+          "description": "All dialogue lines use <Person1> or <Person2> tags",
+          "check": "Every line of dialogue is wrapped in <Person1>...</Person1> or <Person2>...</Person2> tags"
+        },
+        {
+          "name": "output-language-english",
+          "description": "Script is in English since the user's request was in English",
+          "check": "The script content is in English, not Korean or any other language"
+        },
+        {
+          "name": "casual-tone",
+          "description": "Uses casual conversational tone with contractions and fillers",
+          "check": "Contains contractions (it's, don't, etc.) and conversational fillers (Right, Hmm, Exactly, etc.)"
+        },
+        {
+          "name": "saved-to-file",
+          "description": "Script is saved to a .txt file",
+          "check": "A .txt file was created with the podcast script"
+        },
+        {
+          "name": "duration-appropriate",
+          "description": "Word count is appropriate for 10 minutes (~3,200 English words)",
+          "check": "Script is roughly 2,500-4,000 words (reasonable range for 10 min)"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "korean-request-english-source",
+      "prompt": "이 논문을 이해하기 좋게 팟캐스트로 만들어줘. 10분 정도",
+      "expected_output": "Korean podcast script in <Person1>/<Person2> format, casual style, approximately 3,000 words / 80-100 lines",
+      "files": ["/Users/limjk/GitHub/JeiKeiLim/uLift-paper/uLift-manuscript/uLift-paper.md"],
+      "assertions": [
+        {
+          "name": "uses-person-tags",
+          "description": "All dialogue lines use <Person1> or <Person2> tags",
+          "check": "Every line of dialogue is wrapped in <Person1>...</Person1> or <Person2>...</Person2> tags"
+        },
+        {
+          "name": "output-language-korean",
+          "description": "Script is in Korean since the user's request was in Korean",
+          "check": "The script content is in Korean, not English"
+        },
+        {
+          "name": "conversational-korean",
+          "description": "Uses natural spoken Korean, not formal written Korean",
+          "check": "Contains conversational endings like ~거든요, ~잖아요, ~인 거죠 and fillers like 맞아요, 오~, 진짜요?"
+        },
+        {
+          "name": "saved-to-file",
+          "description": "Script is saved to a .txt file",
+          "check": "A .txt file was created with the podcast script"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "english-request-with-audio",
+      "prompt": "Create a deep-dive 10-minute podcast from this paper and generate the audio too",
+      "expected_output": "English deep-dive podcast script + MP3 audio file generated via podcast_tts.py with Fish Audio backend",
+      "files": ["/Users/limjk/GitHub/JeiKeiLim/uLift-paper/uLift-manuscript/uLift-paper.md"],
+      "assertions": [
+        {
+          "name": "uses-person-tags",
+          "description": "Script uses <Person1>/<Person2> tags",
+          "check": "All dialogue wrapped in proper tags"
+        },
+        {
+          "name": "deep-dive-style",
+          "description": "Uses analytical deep-dive tone, not casual",
+          "check": "Script is more structured and analytical, focuses on data and evidence rather than jokes and anecdotes"
+        },
+        {
+          "name": "audio-generated",
+          "description": "An MP3 file was generated",
+          "check": "An .mp3 file exists in the output directory"
+        },
+        {
+          "name": "correct-voice-ids",
+          "description": "Used the correct default voice IDs from the skill, not arbitrary ones",
+          "check": "The TTS command used the Fish Audio English voice IDs specified in the skill"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "implicit-podcast-request",
+      "prompt": "I have this research paper about wearable exercise tracking. Can you make it into something I can listen to on my commute? Maybe like 10 minutes.",
+      "expected_output": "English podcast script — the skill should trigger even though the user didn't say 'podcast'",
+      "files": ["/Users/limjk/GitHub/JeiKeiLim/uLift-paper/uLift-manuscript/uLift-paper.md"],
+      "assertions": [
+        {
+          "name": "skill-triggered",
+          "description": "The podcast-gen skill was invoked despite no explicit 'podcast' keyword",
+          "check": "A podcast script was generated in <Person1>/<Person2> format"
+        },
+        {
+          "name": "output-language-english",
+          "description": "Script is in English matching the request language",
+          "check": "Script content is in English"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "debate-style-request",
+      "prompt": "Turn this into a 10 minute debate-style podcast where the speakers disagree about the approach",
+      "expected_output": "English debate-style podcast with opposing viewpoints between Person1 and Person2",
+      "files": ["/Users/limjk/GitHub/JeiKeiLim/uLift-paper/uLift-manuscript/uLift-paper.md"],
+      "assertions": [
+        {
+          "name": "debate-format",
+          "description": "Speakers take opposing positions and push back on each other",
+          "check": "Person1 and Person2 express different viewpoints, with rebuttals and counterarguments"
+        },
+        {
+          "name": "respectful-disagreement",
+          "description": "Disagreement is respectful, not hostile",
+          "check": "Speakers acknowledge good points from the other side, make concessions"
+        },
+        {
+          "name": "uses-person-tags",
+          "description": "Proper tag format",
+          "check": "All dialogue in <Person1>/<Person2> tags"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "korean-naturalness-deep",
+      "prompt": "이 논문 팟캐스트로 만들어줘",
+      "expected_output": "Korean podcast script that sounds like two real Korean people talking — even with a minimal prompt and no style specification, the default output should have natural spoken Korean with proper fillers, reactions, sentence-ending variety, and conversational rhythm",
+      "files": ["/Users/limjk/GitHub/JeiKeiLim/uLift-paper/uLift-manuscript/uLift-paper.md"],
+      "assertions": [
+        {
+          "name": "no-formal-endings",
+          "description": "Avoids stiff formal endings that sound like a news anchor",
+          "check": "Script does NOT overuse ~합니다, ~입니다, ~습니다 formal endings. Should predominantly use ~거든요, ~잖아요, ~인 거죠, ~인데요, ~이에요, ~네요 etc."
+        },
+        {
+          "name": "natural-fillers",
+          "description": "Contains Korean conversational fillers and reactions",
+          "check": "Contains fillers like 음..., 아~, 맞아요, 오~, 진짜요?, 흥미롭네요, 그렇죠, 와, 대박 — distributed naturally, not clustered"
+        },
+        {
+          "name": "sentence-ending-variety",
+          "description": "Uses varied sentence endings, not repetitive",
+          "check": "Sentence endings vary — mixes ~거든요, ~잖아요, ~인 거예요, ~인데요, ~이에요, ~하더라고요, ~이래요 etc. rather than repeating the same ending"
+        },
+        {
+          "name": "natural-transitions",
+          "description": "Topic transitions sound natural, not mechanical",
+          "check": "Transitions use natural Korean phrases like '근데 여기서...', '그건 그렇고...', '아 그리고...' rather than stiff connectors"
+        },
+        {
+          "name": "no-translation-artifacts",
+          "description": "Doesn't read like translated English",
+          "check": "No awkward literal translations from English. Uses Korean-native expressions and word order. For example, uses topic markers (은/는) and object markers naturally, doesn't overuse passive constructions"
+        },
+        {
+          "name": "utterance-length-natural",
+          "description": "Each person's turn is a natural conversational length",
+          "check": "Most utterances are 1-3 sentences. No long monologues. Person1 (host) has shorter turns with questions/reactions, Person2 (expert) has slightly longer but still conversational turns"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "korean-request-korean-source",
+      "prompt": "이거 팟캐스트로 만들어줄 수 있어?",
+      "expected_output": "Korean podcast script from Korean source content, natural conversational style",
+      "files": ["/Users/limjk/GitHub/JeiKeiLim/claude-code-podcast-gen-skill/test_transcript_ko.txt"],
+      "assertions": [
+        {
+          "name": "output-language-korean",
+          "description": "Script is in Korean",
+          "check": "The output script is in Korean"
+        },
+        {
+          "name": "uses-person-tags",
+          "description": "Proper tag format",
+          "check": "All dialogue in <Person1>/<Person2> tags"
+        },
+        {
+          "name": "conversational-not-formal",
+          "description": "Spoken Korean, not written Korean",
+          "check": "Uses spoken Korean patterns, not news-anchor or textbook Korean"
+        }
+      ]
+    }
+  ]
+}

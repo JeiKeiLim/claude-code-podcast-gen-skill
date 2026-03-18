@@ -7,3 +7,4 @@ podcast_config.yaml
 intro_podcast_script*.txt
 test_transcript*.txt
 podcast_*.txt
+podcast-gen-workspace/
