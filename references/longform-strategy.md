@@ -12,40 +12,40 @@ Long-form podcasts need structural thinking, not just more words. Listeners' att
 
 ## Section Structure
 
-### 30-minute podcast (~9,000 words KO / ~9,600 words EN)
+### 30-minute podcast (~4,500 words KO / ~4,800 words EN)
 
 ```
-[Intro]         2 min    ~600 words
-[Section 1]     6 min    ~1,800 words    ← Core topic introduction
-[Transition]    0.5 min  ~150 words
-[Section 2]     6 min    ~1,800 words    ← Deep analysis
-[Transition]    0.5 min  ~150 words
-[Section 3]     6 min    ~1,800 words    ← Counterpoint / different angle
-[Transition]    0.5 min  ~150 words
-[Section 4]     5 min    ~1,500 words    ← Practical implications
-[Wrap-up]       3 min    ~900 words
-Total          30 min   ~8,850 words
+[Intro]         2 min    ~300 words
+[Section 1]     6 min    ~900 words     ← Core topic introduction
+[Transition]    0.5 min  ~75 words
+[Section 2]     6 min    ~900 words     ← Deep analysis
+[Transition]    0.5 min  ~75 words
+[Section 3]     6 min    ~900 words     ← Counterpoint / different angle
+[Transition]    0.5 min  ~75 words
+[Section 4]     5 min    ~750 words     ← Practical implications
+[Wrap-up]       3 min    ~450 words
+Total          30 min   ~4,425 words
 ```
 
-### 60-minute podcast (~18,000 words KO / ~19,200 words EN)
+### 60-minute podcast (~9,000 words KO / ~9,600 words EN)
 
 ```
-[Intro]         3 min    ~900 words
-[Section 1]     7 min    ~2,100 words
+[Intro]         3 min    ~450 words
+[Section 1]     7 min    ~1,050 words
 [Transition]    0.5 min
-[Section 2]     7 min    ~2,100 words
-[Mid-summary]   2 min    ~600 words      ← "So let's recap..."
-[Section 3]     7 min    ~2,100 words
+[Section 2]     7 min    ~1,050 words
+[Mid-summary]   2 min    ~300 words      ← "So let's recap..."
+[Section 3]     7 min    ~1,050 words
 [Transition]    0.5 min
-[Section 4]     7 min    ~2,100 words
+[Section 4]     7 min    ~1,050 words
 [Transition]    0.5 min
-[Section 5]     7 min    ~2,100 words
-[Mid-summary]   2 min    ~600 words      ← "Before we move to the second half..."
-[Section 6]     7 min    ~2,100 words
+[Section 5]     7 min    ~1,050 words
+[Mid-summary]   2 min    ~300 words      ← "Before we move to the second half..."
+[Section 6]     7 min    ~1,050 words
 [Transition]    0.5 min
-[Section 7]     5 min    ~1,500 words    ← Implications / outlook
-[Wrap-up]       4 min    ~1,200 words
-Total          60 min   ~17,500 words
+[Section 7]     5 min    ~750 words      ← Implications / outlook
+[Wrap-up]       4 min    ~600 words
+Total          60 min   ~8,750 words
 ```
 
 ## Context Window Management

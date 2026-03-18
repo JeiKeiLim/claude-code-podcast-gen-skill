@@ -155,12 +155,21 @@ def _generate_fish(
         latency="balanced",
     )
 
-    audio = fish_client.tts.convert(
-        text=utterance.text,
-        config=fish_config,
-    )
-
-    return bytes(audio)
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            audio = fish_client.tts.convert(
+                text=utterance.text,
+                config=fish_config,
+            )
+            return bytes(audio)
+        except Exception as e:
+            if attempt < max_retries - 1:
+                wait = 2 ** (attempt + 1)
+                print(f"\n  ⚠ Retry {attempt+1}/{max_retries} after error: {e}. Waiting {wait}s...")
+                time.sleep(wait)
+            else:
+                raise
 
 
 def generate_all_audio(

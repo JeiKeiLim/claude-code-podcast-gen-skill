@@ -37,9 +37,9 @@ These word counts are calibrated to real TTS output timing. Hitting the target w
 
 | Target | Korean words | English words | Approx. lines |
 |--------|-------------|--------------|---------------|
-| 10 min | ~3,000 | ~3,200 | 80–100 |
-| 30 min | ~9,000 | ~9,600 | 240–300 |
-| 60 min | ~18,000 | ~19,200 | 500–600 |
+| 10 min | ~1,500 | ~1,600 | 40–50 |
+| 30 min | ~4,500 | ~4,800 | 120–150 |
+| 60 min | ~9,000 | ~9,600 | 250–300 |
 
 ## Step 2: Generate Script
 
